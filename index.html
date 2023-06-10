@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag And Drop</title> 
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="left">
+            <div class="list" draggable="true">List item 1</div>
+            <div class="list" draggable="true">List item 2</div>
+            <div class="list" draggable="true">List item 3</div>
+            <div class="list" draggable="true">List item 4</div>
+        </div>
+        <div class="reset-button">
+            <button onclick="resetContainers()">Reset</button>
+        </div>
+        <div id="right"></div>
+    </div>
+
+    <script>
+        let lists = document.getElementsByClassName("list");
+        let rightBox = document.getElementById('right');
+        let leftBox = document.getElementById('left');
+
+        function resetContainers() {
+            while (rightBox.firstChild) {
+                leftBox.appendChild(rightBox.firstChild);
+            }
+    
+    // Retrieve the initial order of list items
+        const listItems = Array.from(leftBox.getElementsByClassName('list'));
+        
+        // Sort the list items based on their original index
+        const sortedListItems = listItems.sort((a, b) => {
+            const aIndex = Array.from(a.parentNode.children).indexOf(a);
+            const bIndex = Array.from(b.parentNode.children).indexOf(b);
+            return aIndex - bIndex;
+        });
+        
+        // Append the sorted list items to the right container
+        sortedListItems.forEach(listItem => {
+            leftBox.appendChild(listItem);
+        });
+        }
+
+        for (let list of lists) {
+            list.addEventListener("dragstart", function(e) {
+                let selected = e.target;
+                selected.classList.add('dragged');
+
+                rightBox.addEventListener("dragover", function(e) {
+                    e.preventDefault();
+                });
+                rightBox.addEventListener("drop", function(e) {
+                    rightBox.appendChild(selected);
+                    selected.classList.remove('dragged');
+                    selected = null;
+                    setTimeout(function() {
+                        alert('Dropped successfully!');
+                    }, 0);
+                });
+
+                leftBox.addEventListener("dragover", function(e) {
+                    e.preventDefault();
+                });
+                leftBox.addEventListener("drop", function(e) {
+                    leftBox.appendChild(selected);
+                    selected.classList.remove('dragged');
+                    selected = null;
+                });
+            });
+        }
+    </script>
+</body>
+</html>
